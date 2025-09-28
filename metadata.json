@@ -1,0 +1,5 @@
+{
+  "name": "Smooth Operator",
+  "description": "An interactive game to master the art of motion timing. Learn to identify and use different easing functions to become a smooth operator.",
+  "requestFramePermissions": []
+}
