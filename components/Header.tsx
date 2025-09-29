@@ -59,10 +59,12 @@ const Header: React.FC = () => {
     }, 500);
 
     // Initialize random objects - DVD screensaver style motion
+    // Restrict to header area only (viewport height)
+    const headerHeight = window.innerHeight;
     const initialObjects: PhysicsObject[] = images.map((image, index) => ({
       id: index,
       x: Math.random() * (window.innerWidth - 400) + 200,
-      y: Math.random() * (window.innerHeight - 400) + 200,
+      y: Math.random() * (headerHeight - 400) + 200,
       vx: Math.random() > 0.5 ? 4 : -4, // Consistent speeds, random directions
       vy: Math.random() > 0.5 ? 3 : -3, // Different speeds for varied patterns
       radius: 150, // Massive size!
@@ -99,7 +101,9 @@ const Header: React.FC = () => {
           newObj.x += newObj.vx;
           newObj.y += newObj.vy;
           
-          // Boundary collision
+          // Boundary collision - restrict to header area only
+          const headerHeight = window.innerHeight; // Only bounce within the header viewport
+          
           if (newObj.x - newObj.radius < 0) {
             newObj.x = newObj.radius;
             newObj.vx *= -BOUNCE_DAMPING;
@@ -111,8 +115,8 @@ const Header: React.FC = () => {
           if (newObj.y - newObj.radius < 0) {
             newObj.y = newObj.radius;
             newObj.vy *= -BOUNCE_DAMPING;
-          } else if (newObj.y + newObj.radius > window.innerHeight) {
-            newObj.y = window.innerHeight - newObj.radius;
+          } else if (newObj.y + newObj.radius > headerHeight) {
+            newObj.y = headerHeight - newObj.radius;
             newObj.vy *= -BOUNCE_DAMPING;
           }
           
@@ -204,10 +208,11 @@ const Header: React.FC = () => {
       if (obj.isDragging) {
         const newX = mouseX - obj.dragOffset.x;
         const newY = mouseY - obj.dragOffset.y;
+        const headerHeight = window.innerHeight; // Constrain to header area
         return {
           ...obj,
           x: Math.max(obj.radius, Math.min(window.innerWidth - obj.radius, newX)),
-          y: Math.max(obj.radius, Math.min(window.innerHeight - obj.radius, newY)),
+          y: Math.max(obj.radius, Math.min(headerHeight - obj.radius, newY)),
           vx: 0,
           vy: 0
         };
