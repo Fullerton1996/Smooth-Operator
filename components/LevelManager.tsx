@@ -144,7 +144,7 @@ const LevelManager: React.FC = () => {
 
   return (
     <div className="space-y-8 max-w-4xl mx-auto">
-      <div className="text-left p-6">
+      <div className="text-center p-6">
         <h2 className="text-3xl font-bold text-black">Level {currentLevelIndex + 1} of {shuffledLevels.length}</h2>
         <p className="mt-2 text-stone-500">{currentLevel.description}</p>
       </div>
