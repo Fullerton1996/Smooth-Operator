@@ -8,14 +8,12 @@ const IntroSection: React.FC = () => {
     <section className="py-8 mb-12">
       <div className="container mx-auto px-4 max-w-6xl">
         <div className="bg-gradient-to-r from-stone-100 to-stone-50 rounded-2xl p-8 shadow-sm border border-stone-200">
-          {/* Title */}
-          <h1 className="text-lg text-stone-700 text-center mb-8">Hand selected playlist to ease you through.</h1>
-          
-          {/* Spotify Player Section */}
+          {/* Title with Mini Spotify Player */}
           <div className="text-center mb-8">
+            <h1 className="text-lg text-stone-700 mb-4">Hand selected playlist to ease you through.</h1>
             <SpotifyPlayer 
               playlistId="1ykXm5n2MJNcbRcj48X34k"
-              className="max-w-4xl mx-auto"
+              className=""
             />
           </div>
           
