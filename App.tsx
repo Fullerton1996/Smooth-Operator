@@ -36,10 +36,7 @@ const App: React.FC = () => {
       <main className="container mx-auto px-4 py-8">
         <LevelManager />
       </main>
-      <footer className="text-center py-6">
-        <p className="text-stone-600 text-sm">
-          Craft smooth animations with the perfect soundtrack ✨
-        </p>
+      <footer className="py-16">
       </footer>
     </div>
   );
