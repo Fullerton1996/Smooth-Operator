@@ -38,9 +38,7 @@ const SpotifyPlayer: React.FC<SpotifyPlayerProps> = ({
             className="absolute top-0 left-0 w-full h-full rounded-lg"
           />
         </div>
-        <p className="text-sm text-stone-600 mt-2 text-center">
-          Perfect beats for crafting smooth animations ✨
-        </p>
+
       </div>
     </div>
   );
