@@ -7,7 +7,6 @@ interface AnimatedCircle {
   vx: number; // velocity x
   vy: number; // velocity y
   radius: number;
-  color: string;
   opacity: number;
   speed: number;
   direction: number; // angle in radians
@@ -19,6 +18,7 @@ const Header: React.FC = () => {
   const [subtitleVisible, setSubtitleVisible] = useState('');
   const [showCursor, setShowCursor] = useState(true);
   const [circles, setCircles] = useState<AnimatedCircle[]>([]);
+  const [currentColor, setCurrentColor] = useState('#3B82F6'); // All circles start with same color
   const animationRef = useRef<number>();
   const containerRef = useRef<HTMLElement>(null);
 
@@ -56,9 +56,9 @@ const Header: React.FC = () => {
       setShowCursor(prev => !prev);
     }, 500);
 
-    // Initialize animated circles with continuous movement
+    // Initialize animated circles with continuous movement - all same color initially
     const headerHeight = window.innerHeight;
-    const initialCircles: AnimatedCircle[] = colors.map((color, index) => {
+    const initialCircles: AnimatedCircle[] = Array.from({ length: 12 }, (_, index) => {
       const startX = Math.random() * (window.innerWidth - 200) + 100;
       const startY = Math.random() * (headerHeight - 200) + 100;
       const direction = Math.random() * Math.PI * 2; // Random initial direction
@@ -70,7 +70,6 @@ const Header: React.FC = () => {
         vx: Math.cos(direction) * speed,
         vy: Math.sin(direction) * speed,
         radius: 15 + Math.random() * 25, // Varied sizes 15-40px
-        color,
         opacity: 0.4 + Math.random() * 0.4, // 0.4-0.8 opacity
         speed,
         direction,
@@ -89,12 +88,13 @@ const Header: React.FC = () => {
     };
   }, []);
 
-  // Continuous smooth animation with collision detection
+  // Continuous smooth animation with collision detection and color changing
   useEffect(() => {
     const animate = () => {
       setCircles(prevCircles => {
         const headerHeight = window.innerHeight;
         let newCircles = prevCircles.map(circle => ({ ...circle }));
+        let collisionDetected = false;
         
         // Update positions
         newCircles.forEach(circle => {
@@ -108,12 +108,14 @@ const Header: React.FC = () => {
           if (circle.x <= circle.radius || circle.x >= window.innerWidth - circle.radius) {
             circle.vx *= -1;
             circle.x = Math.max(circle.radius, Math.min(window.innerWidth - circle.radius, circle.x));
+            collisionDetected = true;
           }
           
           // Bounce off top/bottom walls
           if (circle.y <= circle.radius || circle.y >= headerHeight - circle.radius) {
             circle.vy *= -1;
             circle.y = Math.max(circle.radius, Math.min(headerHeight - circle.radius, circle.y));
+            collisionDetected = true;
           }
         });
         
@@ -130,6 +132,8 @@ const Header: React.FC = () => {
             
             if (distance < minDistance) {
               // Collision detected - elastic collision
+              collisionDetected = true;
+              
               const angle = Math.atan2(dy, dx);
               const sin = Math.sin(angle);
               const cos = Math.cos(angle);
@@ -158,6 +162,12 @@ const Header: React.FC = () => {
               circle2.vy = vy2 * cos + newVx2 * sin;
             }
           }
+        }
+        
+        // Change color for ALL circles if any collision occurred
+        if (collisionDetected) {
+          const newColor = colors[Math.floor(Math.random() * colors.length)];
+          setCurrentColor(newColor);
         }
         
         return newCircles;
@@ -192,10 +202,10 @@ const Header: React.FC = () => {
             width: circle.radius * 2,
             height: circle.radius * 2,
             borderRadius: '50%',
-            backgroundColor: circle.color,
+            backgroundColor: currentColor,
             opacity: circle.opacity,
             filter: 'blur(0.5px)',
-            transition: 'opacity 0.3s ease-in-out'
+            transition: 'background-color 0.2s ease-in-out, opacity 0.3s ease-in-out'
           }}
         />
       ))}
