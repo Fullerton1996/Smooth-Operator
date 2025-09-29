@@ -11,11 +11,6 @@ const SpotifyPlayer: React.FC<SpotifyPlayerProps> = ({
 }) => {
   return (
     <div className={`spotify-player ${className}`}>
-      {/* Title */}
-      <div className="mb-4">
-        <h1 className="text-lg text-stone-700 text-center">Hand selected playlist to ease you through.</h1>
-      </div>
-
       {/* Always Visible Embedded Spotify Player */}
       <div className="p-4 bg-black/5 rounded-xl shadow-inner">
         <div className="relative w-full" style={{ paddingBottom: '380px' }}>
