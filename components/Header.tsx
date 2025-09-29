@@ -46,7 +46,7 @@ const Header: React.FC = () => {
   }, []);
 
   return (
-    <header className="py-16">
+    <header className="min-h-screen flex items-center justify-center">
       <div className="container mx-auto px-4 text-center">
         <h1 className="text-7xl md:text-8xl font-bold tracking-tight text-black mb-4">
           {titleVisible}

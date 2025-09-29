@@ -6,8 +6,9 @@ import IntroSection from './components/IntroSection';
 
 const App: React.FC = () => {
   return (
-    <div className="min-h-screen text-stone-900 font-sans">
+    <div className="text-stone-900 font-sans">
       <Header />
+      
       <IntroSection />
 
       <main className="container mx-auto px-4 py-8">
