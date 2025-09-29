@@ -25,8 +25,8 @@ const Header: React.FC = () => {
   const title = "Smooth Operator";
   const subtitle = "Easing you into easing.";
   
-  // Professional color palette
-  const colors = ['#3B82F6', '#EF4444', '#10B981', '#F59E0B', '#8B5CF6', '#EC4899'];
+  // Extended professional color palette
+  const colors = ['#3B82F6', '#EF4444', '#10B981', '#F59E0B', '#8B5CF6', '#EC4899', '#06B6D4', '#F97316', '#84CC16', '#A855F7', '#E11D48', '#059669'];
 
   useEffect(() => {
     // Title typing animation
@@ -89,53 +89,78 @@ const Header: React.FC = () => {
     };
   }, []);
 
-  // Continuous smooth animation
+  // Continuous smooth animation with collision detection
   useEffect(() => {
     const animate = () => {
       setCircles(prevCircles => {
         const headerHeight = window.innerHeight;
+        let newCircles = prevCircles.map(circle => ({ ...circle }));
         
-        return prevCircles.map(circle => {
-          let newCircle = { ...circle };
-          
-          // Update position based on velocity
-          newCircle.x += newCircle.vx;
-          newCircle.y += newCircle.vy;
-          
-          // Bounce off boundaries with smooth direction changes
-          if (newCircle.x <= newCircle.radius || newCircle.x >= window.innerWidth - newCircle.radius) {
-            newCircle.vx *= -1;
-            newCircle.x = Math.max(newCircle.radius, Math.min(window.innerWidth - newCircle.radius, newCircle.x));
-            // Add slight randomness to bounce direction
-            newCircle.vy += (Math.random() - 0.5) * 0.5;
-          }
-          
-          if (newCircle.y <= newCircle.radius || newCircle.y >= headerHeight - newCircle.radius) {
-            newCircle.vy *= -1;
-            newCircle.y = Math.max(newCircle.radius, Math.min(headerHeight - newCircle.radius, newCircle.y));
-            // Add slight randomness to bounce direction
-            newCircle.vx += (Math.random() - 0.5) * 0.5;
-          }
-          
-          // Randomly change direction occasionally for more organic movement
-          newCircle.changeDirectionTimer--;
-          if (newCircle.changeDirectionTimer <= 0) {
-            const newDirection = newCircle.direction + (Math.random() - 0.5) * 0.5; // Slight direction change
-            newCircle.vx = Math.cos(newDirection) * newCircle.speed;
-            newCircle.vy = Math.sin(newDirection) * newCircle.speed;
-            newCircle.direction = newDirection;
-            newCircle.changeDirectionTimer = 200 + Math.random() * 300; // Reset timer
-          }
-          
-          // Keep velocity within speed limits
-          const currentSpeed = Math.sqrt(newCircle.vx * newCircle.vx + newCircle.vy * newCircle.vy);
-          if (currentSpeed > newCircle.speed * 1.5) {
-            newCircle.vx = (newCircle.vx / currentSpeed) * newCircle.speed;
-            newCircle.vy = (newCircle.vy / currentSpeed) * newCircle.speed;
-          }
-          
-          return newCircle;
+        // Update positions
+        newCircles.forEach(circle => {
+          circle.x += circle.vx;
+          circle.y += circle.vy;
         });
+        
+        // Handle wall collisions
+        newCircles.forEach(circle => {
+          // Bounce off left/right walls
+          if (circle.x <= circle.radius || circle.x >= window.innerWidth - circle.radius) {
+            circle.vx *= -1;
+            circle.x = Math.max(circle.radius, Math.min(window.innerWidth - circle.radius, circle.x));
+          }
+          
+          // Bounce off top/bottom walls
+          if (circle.y <= circle.radius || circle.y >= headerHeight - circle.radius) {
+            circle.vy *= -1;
+            circle.y = Math.max(circle.radius, Math.min(headerHeight - circle.radius, circle.y));
+          }
+        });
+        
+        // Handle circle-to-circle collisions
+        for (let i = 0; i < newCircles.length; i++) {
+          for (let j = i + 1; j < newCircles.length; j++) {
+            const circle1 = newCircles[i];
+            const circle2 = newCircles[j];
+            
+            const dx = circle2.x - circle1.x;
+            const dy = circle2.y - circle1.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            const minDistance = circle1.radius + circle2.radius;
+            
+            if (distance < minDistance) {
+              // Collision detected - elastic collision
+              const angle = Math.atan2(dy, dx);
+              const sin = Math.sin(angle);
+              const cos = Math.cos(angle);
+              
+              // Separate circles to prevent overlap
+              const overlap = (minDistance - distance) / 2;
+              circle1.x -= overlap * cos;
+              circle1.y -= overlap * sin;
+              circle2.x += overlap * cos;
+              circle2.y += overlap * sin;
+              
+              // Calculate velocities in collision coordinate system
+              const vx1 = circle1.vx * cos + circle1.vy * sin;
+              const vy1 = circle1.vy * cos - circle1.vx * sin;
+              const vx2 = circle2.vx * cos + circle2.vy * sin;
+              const vy2 = circle2.vy * cos - circle2.vx * sin;
+              
+              // Elastic collision formula (assuming equal mass)
+              const newVx1 = vx2;
+              const newVx2 = vx1;
+              
+              // Convert back to original coordinate system
+              circle1.vx = newVx1 * cos - vy1 * sin;
+              circle1.vy = vy1 * cos + newVx1 * sin;
+              circle2.vx = newVx2 * cos - vy2 * sin;
+              circle2.vy = vy2 * cos + newVx2 * sin;
+            }
+          }
+        }
+        
+        return newCircles;
       });
       
       animationRef.current = requestAnimationFrame(animate);
