@@ -1,46 +1,17 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Header from './components/Header';
 import LevelManager from './components/LevelManager';
 import SpotifyPlayer from './components/SpotifyPlayer';
 import IntroSection from './components/IntroSection';
-import FreestyleMode from './components/FreestyleMode';
 
 const App: React.FC = () => {
-  const [isFreestyleMode, setIsFreestyleMode] = useState(false);
-
   return (
     <div className="min-h-screen text-stone-900 font-sans">
       <Header />
       <IntroSection />
-      
-      {/* Mode Toggle */}
-      <div className="container mx-auto px-4 mb-8">
-        <div className="flex justify-center gap-4">
-          <button
-            onClick={() => setIsFreestyleMode(false)}
-            className={`px-6 py-3 rounded-full font-semibold transition-all ${
-              !isFreestyleMode 
-                ? 'bg-stone-800 text-white shadow-lg' 
-                : 'bg-stone-200 text-stone-700 hover:bg-stone-300'
-            }`}
-          >
-            📚 Learning Mode
-          </button>
-          <button
-            onClick={() => setIsFreestyleMode(true)}
-            className={`px-6 py-3 rounded-full font-semibold transition-all ${
-              isFreestyleMode 
-                ? 'bg-stone-800 text-white shadow-lg' 
-                : 'bg-stone-200 text-stone-700 hover:bg-stone-300'
-            }`}
-          >
-            🎯 Freestyle Mode
-          </button>
-        </div>
-      </div>
 
       <main className="container mx-auto px-4 py-8">
-        {isFreestyleMode ? <FreestyleMode /> : <LevelManager />}
+        <LevelManager />
         
         {/* Spotify Player Section */}
         <section className="mt-12 text-center">
